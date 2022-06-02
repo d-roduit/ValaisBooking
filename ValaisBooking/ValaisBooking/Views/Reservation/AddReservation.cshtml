@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "AddReservation";
+}
+
+<div class="alert alert-success" role="alert">
+    Your reservation, No @Context.Session.GetInt32("numReservation"), was successfully made !
+</div>
+
+@{ int hotelBooked = (int)Context.Session.GetInt32("hotelBooked");
+    int hasTV = (int)Context.Session.GetInt32("hasTV");
+    int hasHairDryer = (int)Context.Session.GetInt32("hasHairDryer");
+    string hasTVString = "False";
+    if (hasTV == 1)
+    {
+        hasTVString = "True";
+    }
+    string hasHairDryerString = "False";
+    if (hasHairDryer == 1)
+    {
+        hasHairDryerString = "True";
+    }
+    int maxPrice = (int)Context.Session.GetInt32("maxPrice");
+    int simpleRoom = (int)Context.Session.GetInt32("simpleRoom");
+    int doubleRoom = (int)Context.Session.GetInt32("doubleRoom");
+    string simpleRoomString = "False";
+    if (simpleRoom == 1)
+    {
+        simpleRoomString = "True";
+    }
+    string doubleRoomString = "False";
+    if (doubleRoom == 1)
+    {
+        doubleRoomString = "True";
+    }
+    DateTime checkIn = Convert.ToDateTime(Context.Session.GetString("checkIn"));
+    DateTime checkOut = Convert.ToDateTime(Context.Session.GetString("checkOut"));
+    int numReservation = (int)Context.Session.GetInt32("numReservation");
+    string firstname = Context.Session.GetString("firstname");
+    string lastname = Context.Session.GetString("lastname");}
+
+<center>
+    <a href="@Url.Action("Details", "Hotel", new { id = hotelBooked, hasTV = hasTVString, hasHairDryer = hasHairDryerString, maxPrice = maxPrice, simpleRoom = simpleRoomString, doubleRoom = doubleRoomString, checkIn = checkIn, checkOut = checkOut})" class="btn btn-primary">Book more</a>
+    <a href="@Url.Action("GetReservations", "Reservation", new { reservationNumber = numReservation, firstname = firstname, lastname = lastname})" class="btn btn-primary">Check my reservation</a>
+</center>
+
+

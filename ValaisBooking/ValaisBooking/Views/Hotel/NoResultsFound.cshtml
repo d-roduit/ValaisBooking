@@ -1,0 +1,8 @@
+﻿@using Microsoft.AspNetCore.Http
+
+@{ ViewData["Title"] = "GetHotels"; }
+
+<h3 class="text-center text-secondary mt-5">Oh no... No hotels found for "@Context.Session.GetString("destination")"</h3>
+<p class="text-center mt-4">
+    <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Retry</a>
+</p>

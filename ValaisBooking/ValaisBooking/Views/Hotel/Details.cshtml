@@ -1,0 +1,202 @@
+﻿@using Microsoft.AspNetCore.Http
+@using DataTransferObject;
+
+@model HotelDetailsViewModel
+
+@{ ViewData["Title"] = "Details"; }
+
+<div>
+    <h3 class="text-center">
+        @Html.DisplayFor(model => model.Hotel.Name)
+    </h3>
+    <div class="mt-3 d-flex align-items-center justify-content-center">
+        <hr class="w-25 d-inline-block m-0 mr-3">
+        @for (var i = 0; i < Model.Hotel.Category; i++)
+        {
+            <i class="fas fa-star" style="color: gold; font-size: medium"></i>
+        }
+        <hr class="w-25 d-inline-block m-0 ml-3">
+    </div>
+
+    <h3 class="mt-5 mb-3">Details</h3>
+
+    <hr />
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Hotel.Description)
+        </dt>
+        <dd class="col-sm-10 text-justify">
+            @Html.DisplayFor(model => model.Hotel.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Hotel.Location)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Hotel.Location)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Hotel.HasWifi)
+        </dt>
+        <dd class="col-sm-10">
+            @HotelDetailsViewModel.DisplayHTMLForHasWifi(Model.Hotel)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Hotel.HasParking)
+        </dt>
+        <dd class="col-sm-10">
+            @HotelDetailsViewModel.DisplayHTMLForHasParking(Model.Hotel)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Hotel.Phone)
+        </dt>
+        <dd class="col-sm-10">
+            <a href="tel:@Html.DisplayFor(model => model.Hotel.Phone)">@Html.DisplayFor(model => model.Hotel.Phone)</a>
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Hotel.Email)
+        </dt>
+        <dd class="col-sm-10">
+            <a href="mailto:@Html.DisplayFor(model => model.Hotel.Email)">@Html.DisplayFor(model => model.Hotel.Email)</a>
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Hotel.Website)
+        </dt>
+        <dd class="col-sm-10">
+            <a href="http://@Html.DisplayFor(model => model.Hotel.Website)" target="_blank">@Html.DisplayFor(model => model.Hotel.Website)</a>
+        </dd>
+    </dl>
+</div>
+
+<h3 class="mt-5 mb-3">
+    @if (ViewData["checkInDate"] != null && ViewData["checkOutDate"] != null)
+    {
+        <text>Availability</text> <span class="text-secondary h4">(@ViewData["checkInDate"] - @ViewData["checkOutDate"])</span>
+    }
+    else
+    {
+        <text>Rooms</text>
+    }
+</h3>
+
+<hr />
+
+    @if (Model.Rooms != null)
+    {
+        <div class="mt-3">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Housing type</th>
+                        <th>Price/Night</th>
+                        <th>Facilities</th>
+                        @if (ViewData["checkInDate"] != null && ViewData["checkOutDate"] != null)
+                        {
+                        <th></th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int roomsCount = Model.Rooms.Count; }
+                    @for (int roomIndex = 0; roomIndex < roomsCount; roomIndex++)
+                    {
+                        Room room = Model.Rooms[roomIndex];
+
+                        <tr>
+                            <td class="align-middle">
+                                <a href="#" data-toggle="modal" data-target="#room@(Html.DisplayFor(model =>room.IdRoom))">
+                                    @HotelDetailsViewModel.DisplayTextForRoomType(room)
+                                </a>
+
+                                <div class="modal fade" id="room@(Html.DisplayFor(model => room.IdRoom))" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabel">@HotelDetailsViewModel.DisplayTextForRoomType(room)</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                @if (Model.PicturesByRoom != null && Model.PicturesByRoom[roomIndex] != null)
+                                                {
+                                                <div id="room@(roomIndex)PicturesCarousel" class="carousel slide" data-ride="carousel">
+                                                    <ol class="carousel-indicators">
+                                                        @{int picturesByRoomCount = Model.PicturesByRoom[roomIndex].Count;}
+                                                        @for (int pictureIndex = 0; pictureIndex < picturesByRoomCount ; pictureIndex++)
+                                                        {
+                                                            <li data-target="#room@(roomIndex)PicturesCarousel" data-slide-to="@pictureIndex" @(pictureIndex == 0 ? "class=\"active\"" : "")></li>
+                                                        }
+                                                    </ol>
+                                                    <div class="carousel-inner">
+                                                        @for (int pictureIndex = 0; pictureIndex < picturesByRoomCount; pictureIndex++)
+                                                        {
+                                                            <div class="carousel-item @(pictureIndex == 0 ? "active" : "") ">
+                                                                <img src="@Model.PicturesByRoom[roomIndex][pictureIndex].URL" class="d-block w-100" alt="Room picture @pictureIndex">
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    <a class="carousel-control-prev" href="#room@(roomIndex)PicturesCarousel" role="button" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+                                                    <a class="carousel-control-next" href="#room@(roomIndex)PicturesCarousel" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
+                                                </div>
+                                                }
+
+                                                <dl class="row mt-3 mb-0">
+                                                    <dt class="col-3">
+                                                        Description
+                                                    </dt>
+                                                    <dd class="col-9 text-justify">
+                                                        @room.Description
+                                                    </dd>
+                                                    <dt class="col-3">
+                                                        Facilities
+                                                    </dt>
+                                                    <dd class="col-9">
+                                                        @HotelDetailsViewModel.DisplayHTMLForHasTV(room)
+                                                        <br />
+                                                        @HotelDetailsViewModel.DisplayHTMLForHasHairDryer(room)
+                                                    </dd>
+                                                </dl>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="align-middle">
+                                @room.Price.ToString("N0") CHF
+                            </td>
+                            <td>
+                                @HotelDetailsViewModel.DisplayHTMLForHasTV(room)
+                                <br />
+                                @HotelDetailsViewModel.DisplayHTMLForHasHairDryer(room)
+                            </td>
+                            @if (ViewData["checkInDate"] != null && ViewData["checkOutDate"] != null)
+                            {
+                            <td class="align-middle">
+                                <form asp-action="AddReservation" asp-controller="Reservation" method="POST">
+                                    <input type="hidden" name="idRoom" value="@room.IdRoom"/>
+                                    <button type="submit" class="btn btn-primary d-block mx-auto">Book</button>
+                                </form>
+                            </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning mt-3" role="alert">
+            No rooms available for the moment !
+        </div>
+    }

@@ -1,0 +1,56 @@
+﻿@using DataTransferObject
+
+@model IEnumerable<Hotel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Hotel/style.css" />
+}
+
+
+<div class="container">
+    <h3>@Model.Count() Hotels found</h3>
+
+    @foreach (Hotel item in Model)
+    {
+        <div class="hotelCard card my-3 p-4 bg-light">
+            <h4 class="card-title">
+                @Html.ActionLink(item.Name, "Details", new { id = item.IdHotel }, new { @class = "text-decoration-none text-dark" })
+                @for (var i = 0; i < item.Category; i++)
+                {
+                    <i class="fas fa-star" style="color: gold; font-size: medium"></i>
+                }
+
+            </h4>
+            <h6 class="card-subtitle text-black-50">@Html.DisplayFor(modelItem => item.Location)</h6>
+            <div class="card-body pb-0">
+                <p class="card-text">
+                    @if (item.HasWifi)
+                    {
+                        <span class="text-success"><i class="fas fa-wifi"></i> Free Wi-Fi connection</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger"><i class="fas fa-wifi"></i> No Wi-Fi connection</span>
+                    }
+                </p>
+                <p class="card-text">
+                    @if (item.HasParking)
+                    {
+                        <span class="text-success"><i class="fas fa-parking" style="font-size: 20px;"></i> Free parking</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger"><i class="fas fa-parking" style="font-size: 20px;"></i> No parking</span>
+                    }
+                </p>
+                <!--<p class="card-text text-justify">@Html.DisplayFor(modelItem => item.Description)</p>-->
+                <p class="card-text text-justify">@(item.Description.Length > 350 ? item.Description.Substring(0, 350) + "..." : item.Description)</p>
+                <p class="text-right mb-0">@Html.ActionLink("See more", "Details", new { id = item.IdHotel }, new { @class = "btn btn-primary" })</p>
+            </div>
+        </div>
+    }
+</div>

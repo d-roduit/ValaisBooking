@@ -1,0 +1,84 @@
+﻿@model RoomDetailsViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div>
+    <h3 class="mt-5 mb-3">Room Details</h3>
+
+    <hr />
+
+    <center>
+            <div id="picturesCarousel" class="carousel slide mb-4 w-50" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    @{int nbPictures = Model.Pictures.Count();}
+                    @for (int pictureIndex = 0; pictureIndex < nbPictures; pictureIndex++)
+                    {
+                        <li data-target="#picturesCarousel" data-slide-to="@pictureIndex" @(pictureIndex == 0 ? "class=\"active\"" : "")></li>
+                    }
+                </ol>
+                <div class="carousel-inner">
+                    @for (int pictureIndex = 0; pictureIndex < nbPictures; pictureIndex++)
+                    {
+                        <div class="carousel-item @(pictureIndex == 0 ? "active" : "") ">
+                            <img src="@Model.Pictures[pictureIndex].URL" class="d-block w-100" alt="Room picture @pictureIndex">
+                        </div>
+                    }
+                </div>
+                <a class="carousel-control-prev" href="#picturesCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#picturesCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+    </center>
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Room.Number)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Room.Number)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Room.Type)
+        </dt>
+        <dd class="col-sm-10">
+            @RoomDetailsViewModel.DisplayTextForRoomType(Model.Room)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Room.Description)
+        </dt>
+        <dd class="col-sm-10 text-justify">
+            @Html.DisplayFor(model => model.Room.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Room.Price)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Room.Price) CHF
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Room.HasTV)
+        </dt>
+        <dd class="col-sm-10">
+            @RoomDetailsViewModel.DisplayHTMLForHasTV(Model.Room)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Room.HasHairDryer)
+        </dt>
+        <dd class="col-sm-10">
+            @RoomDetailsViewModel.DisplayHTMLForHasHairDryer(Model.Room)
+        </dd>
+    </dl>
+
+    <div class="float-right">
+        <a href="@Url.Action("Details", "Hotel", new { id = Model.Room.Hotel_IdHotel})" class="btn btn-primary mr-2">See Hotel</a>
+    </div>
+
+</div>
+

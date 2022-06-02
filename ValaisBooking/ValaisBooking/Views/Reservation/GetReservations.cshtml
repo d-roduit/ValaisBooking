@@ -1,0 +1,86 @@
+﻿@using DataTransferObject;
+
+@model GetReservationsViewModel
+
+@{
+    ViewData["Title"] = "GetReservations";
+}
+
+@{int nbReservations = Model.Reservations.Count();}
+
+<div>
+    <center>
+        <h4>
+            Reservation No. @Html.DisplayFor(model => model.Reservations[0].ReservationNumber)
+            for @Html.DisplayFor(model => model.Reservations[0].Firstname) @Html.DisplayFor(model => model.Reservations[0].Lastname)
+        </h4>
+        <hr />
+    </center>
+
+    @if (ViewData["deleteConfirmed"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            The reservation was canceled !
+        </div>
+    }
+
+    <div class="mt-3">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center align-middle">Housing type</th>
+                    <th class="text-center align-middle">Arrival - Departure</th>
+                    <th class="text-center align-middle"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int reservationIndex = 0; reservationIndex < nbReservations; reservationIndex++)
+                {
+                    Reservation reservation = Model.Reservations[reservationIndex];
+                    Room room = Model.Rooms[reservationIndex];
+
+                    <tr>
+                        <td class="text-center align-middle">@GetReservationsViewModel.DisplayTextForRoomType(room)</td>
+                        <td class="text-center align-middle">@Html.DisplayFor(model => reservation.CheckIn) - @Html.DisplayFor(model => reservation.CheckOut)</td>
+                        <td class="text-center align-middle">
+                            <a href="@Url.Action("Details", "Room", new { id = reservation.Room_IdRoom })" class="btn btn-primary mr-2">See Room</a>
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#cancelModal@(reservation.IdReservation)">
+                                Cancel Reservation
+                            </button>
+                            <div class="modal fade" id="cancelModal@(reservation.IdReservation)" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="cancelModalLabel@(reservation.IdReservation)" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="cancelModalLabel@(reservation.IdReservation)">Cancel Reservation</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to cancel your reservation ?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                            <form method="POST" asp-action="Delete" asp-controller="Reservation">
+                                                <input type="hidden" name="id" value="@reservation.IdReservation" />
+                                                <input type="hidden" name="numReservation" value="@reservation.ReservationNumber" />
+                                                <input type="hidden" name="firstname" value="@reservation.Firstname" />
+                                                <input type="hidden" name="lastname" value="@reservation.Lastname" />
+                                                <button type="submit" class="btn btn-danger">Cancel Reservation</button>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+

@@ -1,0 +1,163 @@
+﻿@using DataTransferObject
+
+@model GetHotelsViewModel
+
+@{ ViewData["Title"] = "GetHotels"; }
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Hotel/style.css" />
+}
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/Hotel/GetHotels.js" asp-append-version="true"></script>
+}
+
+<div class="container">
+    <div class="row mt-5 mb-3">
+        <div class="col-4"></div>
+        <div class="col-8">
+            @if (Model.Hotels != null)
+            {
+            <h3>@Model.Hotels.Count() Hotels found for "@Model.SearchHotelsViewModel.Destination"</h3>
+            }
+            else
+            {
+            <h3>0 Hotels found for "@Model.SearchHotelsViewModel.Destination"</h3>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <form asp-action="GetHotels" method="GET">
+                <ul class="list-group shadow-sm mb-3">
+                <li class="list-group-item font-weight-bold bg-warning">Search</li>
+                <li class="list-group-item bg-warning">
+                    <div class="mb-2">
+                        <label class="m-0" asp-for="SearchHotelsViewModel.Destination"></label>
+                        <br />
+                        <input class="form-control" asp-for="SearchHotelsViewModel.Destination" required/>
+                        <span asp-validation-for="SearchHotelsViewModel.Destination" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="m-0" asp-for="SearchHotelsViewModel.CheckIn"></label>
+                        <br>
+                        <input class="form-control" asp-for="SearchHotelsViewModel.CheckIn" required/>
+                        <span asp-validation-for="SearchHotelsViewModel.CheckIn" class="text-danger"></span>
+                    </div>
+                        
+                    <div>
+                        <label class="m-0" asp-for="SearchHotelsViewModel.CheckOut"></label>
+                        <br>
+                        <input class="form-control" asp-for="SearchHotelsViewModel.CheckOut" required/>
+                        <span asp-validation-for="SearchHotelsViewModel.CheckOut" class="text-danger"></span>
+                    </div>
+                </li>
+                <li class="list-group-item bg-warning">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </li>
+            </ul>
+
+                <ul class="list-group shadow-sm">
+                    <li class="list-group-item font-weight-bold bg-secondary text-white">Filter by :</li>
+                    <li class="list-group-item">
+                        <p class="font-weight-bold">Popular filters</p>
+                        <input asp-for="SearchHotelsViewModel.HasWifi" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.HasWifi" class="ml-2 cursor-pointer user-select-none"></label>
+                        <br>
+                        <input asp-for="SearchHotelsViewModel.HasParking" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.HasParking" class="ml-2 cursor-pointer user-select-none"></label>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="font-weight-bold">Stars</p>
+                        <input asp-for="SearchHotelsViewModel.Star1" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.Star1" class="ml-2 cursor-pointer user-select-none"></label> 
+                        <br>
+                        <input asp-for="SearchHotelsViewModel.Star2" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.Star2" class="ml-2 cursor-pointer user-select-none"></label> 
+                        <br>
+                        <input asp-for="SearchHotelsViewModel.Star3" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.Star3" class="ml-2 cursor-pointer user-select-none"></label> 
+                        <br>
+                        <input asp-for="SearchHotelsViewModel.Star4" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.Star4" class="ml-2 cursor-pointer user-select-none"></label> 
+                        <br>
+                        <input asp-for="SearchHotelsViewModel.Star5" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.Star5" class="ml-2 cursor-pointer user-select-none"></label> 
+                    </li>
+                    <li class="list-group-item">
+                        <p class="font-weight-bold">Price range : <span class="badge badge-primary m-0 ml-2">0 - <span id="maxPriceSpan">@Model.SearchHotelsViewModel.MaxPrice</span></span></p>
+                        <div class="d-flex">
+                            <span class="mr-2 text-secondary">0</span>
+                            <input type="range" asp-for="SearchHotelsViewModel.MaxPrice" class="cursor-pointer form-control-range" min="0" max="500" step="50">
+                            <span class="ml-2 text-secondary">500</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="font-weight-bold">Room</p>
+                        <input asp-for="SearchHotelsViewModel.SimpleRoom" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.SimpleRoom" class="ml-2 cursor-pointer user-select-none"></label>
+                        <br />
+                        <input asp-for="SearchHotelsViewModel.DoubleRoom" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.DoubleRoom" class="ml-2 cursor-pointer user-select-none"></label>
+                        <br />
+                        <br />
+                        <input asp-for="SearchHotelsViewModel.HasTV" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.HasTV" class="ml-2 cursor-pointer user-select-none"></label>
+                        <br>
+                        <input asp-for="SearchHotelsViewModel.HasHairDryer" class="cursor-pointer"><label asp-for="SearchHotelsViewModel.HasHairDryer" class="ml-2 cursor-pointer user-select-none"></label>
+                    </li>
+                    <li class="list-group-item"><button class="btn btn-warning w-100" type="submit">Apply filters</button></li>
+                </ul>
+            </form>
+        </div>
+        <div class="col-8">
+            @if (Model.Hotels != null)
+            {
+                foreach (Hotel hotel in Model.Hotels)
+                {
+                <div class="hotelCard card mb-3 p-4 bg-light">
+                    <h4 class="card-title">
+                        @Html.ActionLink(hotel.Name, "Details", new {
+                            id = hotel.IdHotel,
+                            hasTV = Model.SearchHotelsViewModel.HasTV,
+                            hasHairDryer = Model.SearchHotelsViewModel.HasHairDryer,
+                            maxPrice = Model.SearchHotelsViewModel.MaxPrice,
+                            simpleRoom = Model.SearchHotelsViewModel.SimpleRoom,
+                            doubleRoom = Model.SearchHotelsViewModel.DoubleRoom,
+                            checkIn = Model.SearchHotelsViewModel.CheckIn,
+                            checkOut = Model.SearchHotelsViewModel.CheckOut
+                        }, new { target = "_blank", @class = "text-decoration-none text-dark" })
+                        @for (var i = 0; i < hotel.Category; i++)
+                        {
+                            <i class="fas fa-star" style="color: gold; font-size: medium"></i>
+                        }
+                    </h4>
+                    <h6 class="card-subtitle text-black-50">@Html.DisplayFor(modelItem => hotel.Location)</h6>
+                    <div class="card-body pb-0">
+                        <p class="card-text">
+                            @if (hotel.HasWifi) { <span class="text-success"><i class="fas fa-wifi"></i> Free Wi-Fi connection</span> }
+                            else { <span class="text-danger"><i class="fas fa-wifi"></i> No Wi-Fi connection</span> }
+                        </p>
+                        <p class="card-text">
+                            @if (hotel.HasParking) { <span class="text-success"><i class="fas fa-parking" style="font-size: 20px;"></i> Free parking</span> }
+                            else { <span class="text-danger"><i class="fas fa-parking" style="font-size: 20px;"></i> No parking</span> }
+                        </p>
+                        <p class="card-text text-justify">@(hotel.Description.Length > 350 ? hotel.Description.Substring(0, 350) + "..." : hotel.Description)</p>
+                        <p class="text-right mb-0">
+                        @Html.ActionLink("See more", "Details", new {
+                            id = hotel.IdHotel,
+                            hasTV = Model.SearchHotelsViewModel.HasTV,
+                            hasHairDryer = Model.SearchHotelsViewModel.HasHairDryer,
+                            maxPrice = Model.SearchHotelsViewModel.MaxPrice,
+                            simpleRoom = Model.SearchHotelsViewModel.SimpleRoom,
+                            doubleRoom = Model.SearchHotelsViewModel.DoubleRoom,
+                            checkIn = Model.SearchHotelsViewModel.CheckIn,
+                            checkOut = Model.SearchHotelsViewModel.CheckOut
+                        }, new { target = "_blank", @class = "btn btn-primary" })
+                        </p>
+                    </div>
+                </div>
+                }
+            }
+            else
+            {
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">We didn't find what you are looking for <i class="far fa-surprise"></i> </h4>
+                <p>Try to change the filters, next time will be the right one !</p>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+

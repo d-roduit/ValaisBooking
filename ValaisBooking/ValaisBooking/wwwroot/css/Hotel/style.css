@@ -1,0 +1,8 @@
+﻿.hotelCard {
+    transition: 0.2s ease-in-out;
+}
+
+.hotelCard:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+
+}
